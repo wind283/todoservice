@@ -1,9 +1,10 @@
 import React from 'react';
 import Todo from './Todo';
 import AddTodo from './AddTodo';
-import { Paper, List, Container, Button } from '@mui/material';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Paper, List, Container, Grid, Button, AppBar, Toolbar, Typography } from "@mui/material";
 import './App.css';
+import {call, signout} from './service/ApiService';
+
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +14,8 @@ class App extends React.Component {
         { id: '0', title: "Todo 1", done: false, selected: false, priority: 0 },
         { id: '1', title: "Todo 2", done: false, selected: false, priority: 0 },
       ],
-      currentPage: 1,
+      loading:true,
+	    currentPage: 1,
       itemsPerPage: 8,
       currentTime: new Date(),
     };
@@ -39,22 +41,29 @@ class App extends React.Component {
   }
 
   add = (item) => {
+    call("/todo","POST",item).then((response)=>
+      this.setState({items:response.data})  
+    );
     const thisItems = this.state.items;
     item.id = "ID-" + thisItems.length;
     item.done = false;
-    item.priority = 0;
+    item.priority = 0; // 초기 중요도 설정
     thisItems.push(item);
     this.setState({ items: thisItems });
     console.log("items:", this.state.items);
   }
 
   delete = (item) => {
+    call("/todo","DELETE",item).then((response)=>
+      this.setState({items:response.data})  
+    );
     const thisItems = this.state.items;
     const newItems = thisItems.filter(e => e.id !== item.id);
     this.setState({ items: newItems }, () => {
       console.log("Update Items:", this.state.items);
     });
   }
+
 
   toggleSelect = (item) => {
     const thisItems = this.state.items.map(e => {
@@ -92,6 +101,19 @@ class App extends React.Component {
     });
     this.setState({ items: thisItems });
   }
+
+  update = (item) => {
+    call("/todo","PUT",item).then((response)=>
+      this.setState({items:response.data})  
+    );
+  }
+
+  componentDidMount() {
+    call("/todo","GET",item).then((response)=>
+      this.setState({items:response.data})  
+    );
+  }
+
 
   toggleComplete = (item) => {
     const thisItems = this.state.items.map(e => {
@@ -153,6 +175,41 @@ class App extends React.Component {
         </DragDropContext>
       </Paper>
     );
+ var navigationBar = (
+      <AppBar position="static">
+        <Toolbar>
+          <Grid justify = "space-betwwen" container>
+            <Grid item>
+              <Typography variant = "h6">오늘의 할 일</Typography>
+            </Grid>
+            <Grid item>
+              <Button color="inherit" onClick={signout}>logout
+              </Button>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+    );
+
+    var todoListPage = (
+      <div>
+      {navigationBar}
+      <Container maxWidth="md">
+        <AddTodo add = {this.add} />
+        <div className="TodoList">{todoItems}</div>
+      </Container>
+      </div>
+    );
+
+    var loadingPage = <h1>로딩중..</h1>
+    var content = loadingPage;
+
+    if(!this.state.loading) {
+      content = todoListPage;
+    }
+
+
+
 
     return (
       <div className="App">
