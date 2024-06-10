@@ -1,9 +1,9 @@
-import { API_BASE_URL } from '../app-config';
+import { API_BASE_URL } from '../app-config.js';
 const ACCESS_TOKEN = "ACCESS_TOKEN";
 
 export function call(api, method, request) {
-    let header = new Headers({
-        "Content-Type": "applcation/json",
+    let headers = new Headers({
+        "Content-Type": "application/json",
     });
     const accessToken = localStorage.getItem("ACCESS_TOKEN");
     if(accessToken) {

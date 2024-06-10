@@ -8,12 +8,12 @@ import {
     Typography,
 } from "@mui/material";
 
-import {signup} from "./service/ApiService";
+import {signup} from "./service/ApiService.js";
 
 class SignUp extends React.Component {
     constructor(props){
         super(props);
-        this.handleSubmit = this.handlerSubmit.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     handleSubmit(event) {
         event.preventDefault();
@@ -22,11 +22,16 @@ class SignUp extends React.Component {
         const username = data.get("username");
         const email = data.get("email");
         const password = data.get("password");
-        signup({email:email,username:username, password: password}).then(
-            (response) => {
+        signup({ email: email, username: username, password: password })
+            .then((response) => {
+                // 성공 시 /login으로 이동
                 window.location.href = "/login";
-            }
-        );
+            })
+            .catch((error) => {
+                // 오류 발생 시 콘솔에 오류 출력
+                console.error("Signup error:", error);
+                alert("Signup failed. Please try again.");
+            });
     }
     render() {
         return (

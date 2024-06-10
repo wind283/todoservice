@@ -1,11 +1,11 @@
 import React from "react";
 import "./index.css";
-import App from "./App";
-import Login from "./Login";
-import SignUp from "./SignUp";
+import App from "./App.js";
+import Login from "./Login.js";
+import SignUp from "./SignUp.js";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box/index.js";
+import Typography from "@mui/material/Typography/index.js";
 
 function Copyright() {
     return(
@@ -24,7 +24,7 @@ class AppRouter extends React.Component {
             <div>
                 <Routes>
                     <Route path="/login" element={<Login />} />
-                    <Route path="/singup" element={<SignUp />} />
+                    <Route path="/signup" element={<SignUp />} />
                     <Route path="/" element={<App />} />
                 </Routes>
             </div>
