@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../app-config.js';
+import { API_BASE_URL } from '../app-config';
 const ACCESS_TOKEN = "ACCESS_TOKEN";
 
 export function call(api, method, request) {
@@ -7,7 +7,7 @@ export function call(api, method, request) {
     });
     const accessToken = localStorage.getItem("ACCESS_TOKEN");
     if(accessToken) {
-        headers.append("Authorization", "Bearer" + accessToken);
+        headers.append("Authorization", "Bearer " + accessToken);
     }
     let options = {
             headers: headers,
