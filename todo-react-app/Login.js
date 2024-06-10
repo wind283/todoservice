@@ -1,5 +1,5 @@
 import React from "react";
-import {signin} from "./service/ApiService.js";
+import {signin} from "./service/ApiService";
 import {Button,TextField,Grid,Link,Container,Typography} from "@mui/material";
 
 class Login extends React.Component{
@@ -18,13 +18,13 @@ class Login extends React.Component{
 
     render() {
         return(
-        <Container componenet = "main" maxWidth = "xs" style={{marginTop: "8%"}}>
+        <Container component = "main" maxWidth = "xs" style={{marginTop: "8%"}}>
             <Grid container spacing = {2}>
                 <Typography component = "h1" variant = "h5">
                     로그인
                 </Typography>
             </Grid>
-            <form noValidate onSubmit={this.handleSubmitSubmit}>
+            <form noValidate onSubmit={this.handleSubmit}>
                 {""}
             <Grid container spacing = {2}>
                 <Grid item xs={12}>
