@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public WebSecurityConfig(ObjecMapper objectMapper) {
+    public WebSecurityConfig(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
