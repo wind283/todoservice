@@ -1,7 +1,6 @@
 package com.example.todo.config;
 
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,8 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     private TokenProvider tokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletReqiest request, HttpServletResponse response,
-    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         try {
                 String token = parseBearerToken(request);
                 log.info("Filter is running...");
@@ -45,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                     SecurityContextHolder.setContext(securityContext);
                 }
         }catch (Exception ex) {
-            logger.error("Could not set user authentication in security context", ex);
+            log.error("Could not set user authentication in security context", ex);
         /*
          response.setStatus(HttpServletResponse.SC_FORBIDDEN);
          response.getWriter().write("<error>");
@@ -55,11 +54,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         filterChain.doFilter(request, response);
     }
     private String parseBearerToken( HttpServletRequest request){
-        String bearerToken = request.getHeader("Authorization")
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(("Bearer ")) {
+        String bearerToken = request.getHeader("Authorization");
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
                 return bearerToken.substring(7);
         }
         return null;
     }
 }
-
