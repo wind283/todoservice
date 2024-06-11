@@ -45,11 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 }
         }catch (Exception ex) {
             log.error("Could not set user authentication in security context", ex);
-        /*
-         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-         response.getWriter().write("<error>");
-         response.getWriter().flush();
-         */
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("<error>");
+            response.getWriter().flush();
         }
         filterChain.doFilter(request, response);
     }
@@ -61,3 +59,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         return null;
     }
 }
+

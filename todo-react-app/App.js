@@ -36,8 +36,10 @@ class App extends React.Component {
     clearInterval(this.intervalID);
   }
 
-  componentDidUpdate() {
-    localStorage.setItem('items', JSON.stringify(this.state.items));
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.items !== this.state.items) {
+      localStorage.setItem('items', JSON.stringify(this.state.items));
+    }
   }
 
   add = (item) => {
@@ -171,7 +173,7 @@ class App extends React.Component {
  var navigationBar = (
       <AppBar position="static">
         <Toolbar>
-          <Grid justify = "space-betwwen" container>
+          <Grid container justifyContent = "space-betwwen">
             <Grid item>
               <Typography variant = "h6">오늘의 할 일</Typography>
             </Grid>

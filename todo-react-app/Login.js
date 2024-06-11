@@ -13,7 +13,10 @@ class Login extends React.Component{
         const email = data.get("email");
         const password = data.get("password");
 
-        signin({email:email,password: password});
+        signin({ email: email, password: password }).catch((error) => {
+            console.error("Login failed: ", error);
+            alert("로그인에 실패했습니다. 다시 시도해 주세요.");
+          });
     }
 
     render() {

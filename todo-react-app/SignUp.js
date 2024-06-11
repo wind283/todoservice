@@ -8,7 +8,7 @@ import {
     Typography,
 } from "@mui/material";
 
-import {signup} from "./service/ApiService.js";
+import {signup} from "./service/ApiService";
 
 class SignUp extends React.Component {
     constructor(props){
@@ -22,15 +22,14 @@ class SignUp extends React.Component {
         const username = data.get("username");
         const email = data.get("email");
         const password = data.get("password");
-        signup({ email: email, username: username, password: password })
-            .then((response) => {
-                // 성공 시 /login으로 이동
+        signup({email:email,username:username, password: password}).then(
+            (response) => {
                 window.location.href = "/login";
             })
             .catch((error) => {
-                // 오류 발생 시 콘솔에 오류 출력
-                console.error("Signup error:", error);
-                alert("Signup failed. Please try again.");
+                // 추가된 부분: 오류 처리
+                console.error("Sign up failed: ", error);
+                alert("회원가입에 실패했습니다. 다시 시도해 주세요.");
             });
     }
     render() {
@@ -39,7 +38,7 @@ class SignUp extends React.Component {
                 <form noValidate onSubmit={this.handleSubmit}>
                     <Grid container spacing = {2}>
                         <Grid item xs={12}>
-                            <Typography comoponent="h1" variant ="h5">
+                            <Typography component="h1" variant ="h5">
                                 계정 생성
                             </Typography>
                         </Grid>
@@ -90,7 +89,7 @@ class SignUp extends React.Component {
                             </Button>
                         </Grid>
                         </Grid>
-                        <Grid container justify="flex-end">
+                        <Grid container justifyContent="flex-end">
                             <Grid item>
                                 <Link href="/login" variant="body2">
                                     이미 계정이 있습니까? 로그인 하세요.
