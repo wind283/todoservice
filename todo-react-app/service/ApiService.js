@@ -46,6 +46,10 @@ export function signin(userDTO) {
             localStorage.setItem("ACCESS_TOKEN", response.token);
             window.location.href="/";
         }
+    })
+    .catch((error) => {
+        console.error("Signin failed: ", error);
+        alert("로그인에 실패했습니다. 다시 시도해 주세요.");
     });
 }
 
@@ -68,6 +72,6 @@ export function signup(userDTO) {
 }
 
 export function signout() {
-    localStorage.setItem("ACCESS_TOKEN",null);
-    window.location.href="/";
+    localStorage.removeItem("ACCESS_TOKEN",null);
+    window.location.href="/login";
 }
