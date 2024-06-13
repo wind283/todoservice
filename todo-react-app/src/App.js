@@ -24,8 +24,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    call("/todo", "GET", null).then((response) => { // 수정된 부분
-      this.setState({ items: response.data, loading: false }); // 수정된 부분
+    call("/todo", "GET", null).then((response) => {
+      this.setState({ items: response.data, loading: false });
     });
     this.intervalID = setInterval(() => {
       this.setState({ currentTime: new Date() });
@@ -137,7 +137,7 @@ class App extends React.Component {
     const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(items.length / itemsPerPage);
 
-    var todoItems = currentItems.length > 0 && (
+    const todoItems = currentItems.length > 0 && (
       <Paper style={{ margin: 16 }}>
         <DragDropContext onDragEnd={this.onDragEnd}>
           <Droppable droppableId="todos">
@@ -145,11 +145,12 @@ class App extends React.Component {
               <List {...provided.droppableProps} ref={provided.innerRef}>
                 {currentItems.map((item, idx) => (
                   <Draggable key={item.id} draggableId={item.id} index={idx}>
-                    {(provided) => (
+                    {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
+                        className={`draggable-item ${snapshot.isDragging ? 'dragging' : ''}`} // Draggable class 추가
                       >
                         <Todo
                           item={item}
@@ -158,6 +159,10 @@ class App extends React.Component {
                           delete={this.delete}
                           setPriority={this.setPriority}
                           toggleComplete={this.toggleComplete}
+                          update={this.update}
+                          draggableProps={provided.draggableProps}
+                          dragHandleProps={provided.dragHandleProps}
+                          innerRef={provided.innerRef}
                         />
                       </div>
                     )}
@@ -170,10 +175,11 @@ class App extends React.Component {
         </DragDropContext>
       </Paper>
     );
+
  var navigationBar = (
       <AppBar position="static">
         <Toolbar>
-          <Grid container justifyContent = "space-betwwen">
+          <Grid container justifyContent = "space-between">
             <Grid item>
               <Typography variant = "h6">오늘의 할 일</Typography>
             </Grid>
