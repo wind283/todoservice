@@ -27,9 +27,9 @@ class Todo extends React.Component {
   }
 
   editEventHandler = (e) => {
-    const thisItem = this.state.item;
-    thisItem.title = e.target.value;
-    this.setState({ item: thisItem });
+    const updatedItem = { ...this.state.item, title: e.target.value };
+    this.setState({ item: updatedItem });
+    this.props.update(updatedItem);
   }
 
   checkboxEventHandler = (e) => {
@@ -53,7 +53,11 @@ class Todo extends React.Component {
   render() {
     const item = this.state.item;
     return (
-      <ListItem>
+      <ListItem
+      {...this.props.draggableProps}
+      {...this.props.dragHandleProps}
+      ref={this.props.innerRef}
+      >
         <IconButton
           className={`toggle-complete ${item.done ? 'completed' : ''}`}
           onClick={this.toggleCompleteEventHandler}
@@ -84,7 +88,7 @@ class Todo extends React.Component {
               key={num}
               onClick={() => this.setPriorityHandler(num)}
               style={{ color: item.priority >= num ? 'gold' : 'gray', padding: 4 }}
-            >
+            > 
               {item.priority >= num ? (
                 <Star style={{ fontSize: '1.5rem' }} />
               ) : (
