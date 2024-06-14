@@ -5,7 +5,7 @@ class AddTodo extends React.Component {
     constructor(props) {
         super(props);
         this.state = { item: { title: "" } };
-        this.add = props.add; // props의 함수를 this.add에 연결, props에는 상위 컴포넌트(App.js)의 함수, 매개변수가 들어있음
+        this.add = props.add;
     }
 
     onInputChange = (e) => {
@@ -17,7 +17,7 @@ class AddTodo extends React.Component {
 
     onButtonClick = () => {
         this.add(this.state.item);
-        this.setState({ item: { title: "" } }); // text 값을 추가하고 입력 필드는 초기화시킨다.
+        this.setState({ item: { title: "" } });
     };
 
     enterKeyEventHandler = (e) => {
@@ -28,7 +28,7 @@ class AddTodo extends React.Component {
 
     render() {
         return (
-            <Paper style={{ margin: 16, padding: 16 }}> {/* 'margine'을 'margin'으로 수정 */}
+            <Paper style={{ margin: 16, padding: 16 }}> {}
                 <Grid container>
                     <Grid xs={11} md={11} item style={{ paddingRight: 16 }}>
                         <TextField
