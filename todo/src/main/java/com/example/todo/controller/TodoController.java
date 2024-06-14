@@ -28,7 +28,7 @@ import com.example.todo.service.TodoService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("todo")
 public class TodoController {
@@ -64,7 +64,7 @@ public class TodoController {
 	@GetMapping
 	public ResponseEntity<?> retrieveTodo(@AuthenticationPrincipal String userId,
 										  @RequestParam(defaultValue = "0") int page,
-										  @RequestParam(defaultValue = "10") int size) {
+										  @RequestParam(defaultValue = "8") int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		Page<TodoEntity> entities = service.retrieve(userId, pageable);
 		List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
