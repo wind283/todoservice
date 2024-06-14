@@ -22,7 +22,6 @@ class SignUp extends React.Component {
         const username = data.get("username");
         const email = data.get("email");
         const password = data.get("password");
-        
         signup({email:email,username:username, password: password}).then(
             (response) => {
                 window.location.href = "/login";

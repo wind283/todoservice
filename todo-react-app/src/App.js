@@ -1,12 +1,11 @@
 import React from 'react';
 import Todo from './Todo.js';
 import AddTodo from './AddTodo.js';
-import { Paper, List, Container, Grid, Button, AppBar, Toolbar, Typography } from "@mui/material";
+import { Paper, List, Container, Grid, AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import './App.css';
 import AppRouter from './AppRouter.js';
-import {call, signout} from './service/ApiService.js';
-
+import { call } from './service/ApiService.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -16,8 +15,8 @@ class App extends React.Component {
         { id: '0', title: "Todo 1", done: false, selected: false, priority: 0 },
         { id: '1', title: "Todo 2", done: false, selected: false, priority: 0 },
       ],
-      loading:true,
-	    currentPage: 1,
+      loading: true,
+      currentPage: 1,
       itemsPerPage: 8,
       currentTime: new Date(),
     };
@@ -25,7 +24,12 @@ class App extends React.Component {
 
   componentDidMount() {
     call("/todo", "GET", null).then((response) => {
-      this.setState({ items: response.data, loading: false });
+      const items = response.data.map((item, index) => ({
+        ...item,
+        id: item.id.toString(),
+        index: index
+      }));
+      this.setState({ items, loading: false });
     });
     this.intervalID = setInterval(() => {
       this.setState({ currentTime: new Date() });
@@ -43,29 +47,26 @@ class App extends React.Component {
   }
 
   add = (item) => {
-    call("/todo","POST",item).then((response)=>{
-      this.setState({items:response.data})  
-  });
-    const thisItems = this.state.items;
-    item.id = "ID-" + thisItems.length;
-    item.done = false;
-    item.priority = 0; // 초기 중요도 설정
-    thisItems.push(item);
-    this.setState({ items: thisItems });
-    console.log("items:", this.state.items);
-  }
-
-  delete = (item) => {
-    call("/todo","DELETE",item).then((response)=>{
-      this.setState({items:response.data})  
-  });
-    const thisItems = this.state.items;
-    const newItems = thisItems.filter(e => e.id !== item.id);
-    this.setState({ items: newItems }, () => {
-      console.log("Update Items:", this.state.items);
+    call("/todo", "POST", item).then((response) => {
+      const items = response.data.map((item, index) => ({
+        ...item,
+        id: item.id.toString(),
+        index: index
+      }));
+      this.setState({ items });
     });
   }
 
+  delete = (item) => {
+    call("/todo", "DELETE", item).then((response) => {
+      const items = response.data.map((item, index) => ({
+        ...item,
+        id: item.id.toString(),
+        index: index
+      }));
+      this.setState({ items });
+    });
+  }
 
   toggleSelect = (item) => {
     const thisItems = this.state.items.map(e => {
@@ -85,8 +86,8 @@ class App extends React.Component {
   }
 
   deleteAll = () => {
-    this.setState({ items: [] }, () => {
-      console.log("Deleted all items:", this.state.items);
+    call("/todo/all", "DELETE").then((response) => {
+      this.setState({ items: [] });
     });
   }
 
@@ -105,9 +106,9 @@ class App extends React.Component {
   }
 
   update = (item) => {
-    call("/todo","PUT",item).then((response)=>
-      this.setState({items:response.data})  
-    );
+    call("/todo", "PUT", item).then((response) => {
+      this.setState({ items: response.data });
+    });
   }
 
   toggleComplete = (item) => {
@@ -134,89 +135,56 @@ class App extends React.Component {
     const { items, currentPage, itemsPerPage, currentTime } = this.state;
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = items.slice(indexOfFirstItem, indexOfFirstItem + itemsPerPage);
     const totalPages = Math.ceil(items.length / itemsPerPage);
-
-    const todoItems = currentItems.length > 0 && (
-      <Paper style={{ margin: 16 }}>
-        <DragDropContext onDragEnd={this.onDragEnd}>
-          <Droppable droppableId="todos">
-            {(provided) => (
-              <List {...provided.droppableProps} ref={provided.innerRef}>
-                {currentItems.map((item, idx) => (
-                  <Draggable key={item.id} draggableId={item.id} index={idx}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className={`draggable-item ${snapshot.isDragging ? 'dragging' : ''}`} // Draggable class 추가
-                      >
-                        <Todo
-                          item={item}
-                          key={item.id}
-                          toggleSelect={this.toggleSelect}
-                          delete={this.delete}
-                          setPriority={this.setPriority}
-                          toggleComplete={this.toggleComplete}
-                          update={this.update}
-                          draggableProps={provided.draggableProps}
-                          dragHandleProps={provided.dragHandleProps}
-                          innerRef={provided.innerRef}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </List>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </Paper>
-    );
-
- var navigationBar = (
-      <AppBar position="static">
-        <Toolbar>
-          <Grid container justifyContent = "space-between">
-            <Grid item>
-              <Typography variant = "h6">오늘의 할 일</Typography>
-            </Grid>
-            <Grid item>
-              <Button color="inherit" onClick={signout}>logout
-              </Button>
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
-    );
-
-    var todoListPage = (
-      <div>
-      {navigationBar}
-      <Container maxWidth="md">
-        <AddTodo add = {this.add} />
-        <div className="TodoList">{todoItems}</div>
-      </Container>
-      </div>
-    );
-
-    var loadingPage = <h1>로딩중..</h1>
-    var content = loadingPage;
-
-    if(!this.state.loading) {
-      content = todoListPage;
-    }
 
     return (
       <div className="App">
+        <AppBar position="static">
+          <Toolbar>
+            <Grid container justifyContent="space-between">
+              <Grid item>
+                <Typography variant="h6">오늘의 할 일</Typography>
+              </Grid>
+            </Grid>
+          </Toolbar>
+        </AppBar>
         <Container maxWidth="md">
           <div className="current-time">
             {currentTime.toLocaleTimeString()}
           </div>
           <AddTodo add={this.add} />
-          <div className="TodoList">{todoItems}</div>
+          <Paper style={{ margin: 16 }}>
+            <DragDropContext onDragEnd={this.onDragEnd}>
+              <Droppable droppableId="droppable">
+                {(provided) => (
+                  <List {...provided.droppableProps} ref={provided.innerRef}>
+                    {currentItems.map((item, index) => (
+                      <Draggable key={item.id} draggableId={item.id} index={index}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <Todo
+                              item={item}
+                              toggleSelect={this.toggleSelect}
+                              delete={this.delete}
+                              setPriority={this.setPriority}
+                              toggleComplete={this.toggleComplete}
+                              update={this.update}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </List>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </Paper>
           <Button
             variant="contained"
             color="secondary"
@@ -234,19 +202,17 @@ class App extends React.Component {
             Todo 초기화
           </Button>
           <div style={{ marginTop: 16 }}>
-            {Array.from(Array(totalPages), (e, i) => {
-              return (
-                <Button
-                  key={i}
-                  variant="outlined"
-                  color="primary"
-                  onClick={(e) => this.handlePageChange(e, i + 1)}
-                  style={{ margin: 4 }}
-                >
-                  {i + 1}
-                </Button>
-              );
-            })}
+            {Array.from(Array(totalPages), (e, i) => (
+              <Button
+                key={i}
+                variant="outlined"
+                color="primary"
+                onClick={(e) => this.handlePageChange(e, i + 1)}
+                style={{ margin: 4 }}
+              >
+                {i + 1}
+              </Button>
+            ))}
           </div>
         </Container>
       </div>

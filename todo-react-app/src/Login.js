@@ -49,7 +49,6 @@ class Login extends React.Component{
                         id="password"
                         label="패스워드"
                         name = "password"
-                        type = "password"
                         autoComplete = "password"
                     />
                 </Grid>
@@ -69,7 +68,7 @@ class Login extends React.Component{
                 </Link>
             </Grid>
             </form>
-         </Container>
+        </Container>
     );
     }
 }
