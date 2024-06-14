@@ -5,7 +5,7 @@ export function call(api, method, request) {
     let headers = new Headers({
         "Content-Type": "application/json",
     });
-    const accessToken = localStorage.getItem("ACCESS_TOKEN");
+    const accessToken = localStorage.getItem(ACCESS_TOKEN);
     if(accessToken) {
         headers.append("Authorization", "Bearer " + accessToken);
     }
@@ -43,13 +43,9 @@ export function signin(userDTO) {
     return call("/auth/signin", "POST",userDTO)
     .then((response) => {
         if(response.token){
-            localStorage.setItem("ACCESS_TOKEN", response.token);
+            localStorage.setItem(ACCESS_TOKEN, response.token);
             window.location.href="/";
         }
-    })
-    .catch((error) => {
-        console.error("Signin failed: ", error);
-        alert("로그인에 실패했습니다. 다시 시도해 주세요.");
     });
 }
 
@@ -72,6 +68,6 @@ export function signup(userDTO) {
 }
 
 export function signout() {
-    localStorage.removeItem("ACCESS_TOKEN",null);
-    window.location.href="/login";
+    localStorage.setItem(ACCESS_TOKEN,null);
+    window.location.href="/";
 }
